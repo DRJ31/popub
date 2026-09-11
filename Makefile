@@ -1,26 +1,27 @@
 .PHONY: all clean install uninstall
 
-all: popub-local/popub-local popub-relay/popub-relay
-
 PREFIX=/usr/local
 GOBUILD=go build
+GOGET=go get
+
+all: popub-local popub-relay
 
 clean:
-	rm -f popub-local/popub-local popub-relay/popub-relay
+	rm -f popub-local popub-relay
 
 install: all
-	install -Dm0755 popub-local/popub-local "$(DESTDIR)$(PREFIX)/bin/popub-local"
-	install -Dm0755 popub-relay/popub-relay "$(DESTDIR)$(PREFIX)/bin/popub-relay"
+	install -Dm0755 popub-local "$(DESTDIR)$(PREFIX)/bin/popub-local"
+	install -Dm0755 popub-relay "$(DESTDIR)$(PREFIX)/bin/popub-relay"
 	$(MAKE) -C systemd install DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)"
 
 uninstall:
 	rm -f "$(PREFIX)/bin/popub-local" "$(DESTDIR)$(PREFIX)/bin/popub-relay"
 	$(MAKE) -C systemd uninstall DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)"
 
-popub-local/popub-local: popub-local/main.go popub-local/delayer.go
-	cd popub-local && $(GOBUILD)
+popub-local: cmd/popub-local/main.go internal/backoff/backoff.go internal/common/common.go internal/proxy_v2/proxy_v2.go
+	$(GOGET) -u -v ./cmd/popub-local
+	$(GOBUILD) ./cmd/popub-local
 
-popub-relay/popub-relay: popub-local/main.go popub-local/delayer.go
-	cd popub-relay && $(GOBUILD)
-
-
+popub-relay: cmd/popub-relay/main.go internal/backoff/backoff.go internal/common/common.go internal/proxy_v2/proxy_v2.go
+	$(GOGET) -u -v ./cmd/popub-relay
+	$(GOBUILD) ./cmd/popub-relay

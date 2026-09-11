@@ -15,18 +15,13 @@ Building
 
 Download the source code, and the latest [Go](https://golang.org/dl/).
 
-On your home computer, type:
-
+In addition to the normal `go build` command,
 ```
-cd popub-local
-go build
+go build ./cmd/popub-local ./cmd/popub-relay
 ```
-
-On your server machine, type:
-
+I also provide a handy `Makefile` script for your convenience:
 ```
-cd popub-relay
-go build
+make
 ```
 
 Running
@@ -37,23 +32,24 @@ Assume you have a web service at `localhost:80`, you want to publish it as `my.s
 On your home computer, type:
 
 ```
-cd popub-local
-./popub-local localhost:80 my.server.addr:46687 SomePassword
+./popub-local localhost:80 my.server.addr:46687 SomePassphrase
 ```
 
 On your server machine, type:
 
 ```
-cd popub-relay
-./popub-relay :46687 :8080 SomePassword
+./popub-relay :46687 :8080 SomePassphrase
 ```
-
-Note: The password is for authorization only, your traffic is not encrypted.
 
 Running as Systemd services
 ---------------------------
 
 Refer to [systemd/README.md](systemd/README.md) for instructions on running as Systemd services.
+
+Protocol Definition
+-------------------
+
+Refer to [PROTOCOL.md](PROTOCOL.md) for protocol definition.
 
 License
 -------
